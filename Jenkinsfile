@@ -90,7 +90,6 @@ pipeline {
                 milestone(1)
                 withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'CentOS_EC2_login', keyFileVariable: 'EC2_login', passphraseVariable: '', usernameVariable: 'centos')]){
                     script {
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login $dockerprivateregistry\""
                         sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivateregistry/train-schedule:${env.BUILD_NUMBER}\""
                         try {
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker stop train-schedule\""
