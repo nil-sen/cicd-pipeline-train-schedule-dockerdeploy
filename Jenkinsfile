@@ -53,7 +53,7 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry($dockerprivateregistry,'') {
+                    docker.withRegistry("${dockerprivateregistry}",'') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
