@@ -90,14 +90,14 @@ pipeline {
                 milestone(1)
                 withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'CentOS_EC2_login', keyFileVariable: 'EC2_login', passphraseVariable: '', usernameVariable: 'centos')]){
                     script {
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivateregistry/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                         try {
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker stop train-schedule\""
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker rm train-schedule\""
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d $dockerprivateregistry/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
