@@ -8,7 +8,7 @@ pipeline {
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
             }
         }
-        /*stage('Build Docker Image') {
+        stage('Build Docker Image') {
             when {
                 branch 'master'
             }
@@ -60,7 +60,7 @@ pipeline {
                 }
             }
         }
-        stage('DeployToProduction') {
+        /*stage('DeployToProduction') {
             when {
                 branch 'master'
             }
@@ -90,8 +90,6 @@ pipeline {
                 milestone(1)
                 withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'CentOS_EC2_login', keyFileVariable: 'EC2_login', passphraseVariable: '', usernameVariable: 'centos')]){
                     script {
-                        sh "sudo -i"
-                        sh "chmod 700 /home/centos"
                         sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                         try {
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker stop train-schedule\""
