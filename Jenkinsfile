@@ -47,13 +47,28 @@ pipeline {
                 }
             }
         }
-        stage('Push Docker Image Private Registry') {
+        // without user authentication
+        /*stage('Push Docker Image Private Registry') {
             when {
                 branch 'master'
             }
             steps {
                 script {
                     docker.withRegistry("${dockerprivateregistry}",'') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
+            }
+        }*/
+        // with basic authentication
+        stage('Push Docker Image Private Registry') {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    docker.withRegistry("${dockerprivateregistry}",'docker_private_registry_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
