@@ -106,7 +106,7 @@ pipeline {
                 withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'CentOS_EC2_login', keyFileVariable: 'EC2_login', passphraseVariable: '', usernameVariable: 'centos')]){
                     script {
                         // add below line for basic authentication to docker private registry
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login -u $dockerprivateuser $dockerprivatepasswd $dockerprivaterepository\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login -u $dockerprivateuser -p $dockerprivatepasswd $dockerprivateregistry\""
                         sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                         try {
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker stop train-schedule\""
