@@ -68,7 +68,8 @@ pipeline {
             }
             steps {
                 script {
-                    docker.withRegistry("${dockerprivateregistry}",'docker_private_registry_login') {
+                    docker.withRegistry("${dockerprivateregistrycert}",'docker_private_registry_login') {
+                    //docker.withRegistry("${dockerprivateregistry}",'docker_private_registry_login') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
@@ -106,15 +107,20 @@ pipeline {
                 withCredentials(bindings: [sshUserPrivateKey(credentialsId: 'CentOS_EC2_login', keyFileVariable: 'EC2_login', passphraseVariable: '', usernameVariable: 'centos')]){
                     script {
                         // add below line for basic authentication to docker private registry
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login -u $dockerprivateuser -p $dockerprivatepasswd $dockerprivateregistry\""
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login -u $dockerprivateuser -p $dockerprivatepasswd $dockerprivateregistrycert\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepositorycert/train-schedule:${env.BUILD_NUMBER}\""
+                        
+                        //sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker login -u $dockerprivateuser -p $dockerprivatepasswd $dockerprivateregistry\""
+                        //sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker pull $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                         try {
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker stop train-schedule\""
                             sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker rm train-schedule\""
                         } catch (err) {
                             echo: 'caught error: $err'
                         }
-                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
+                        sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d $dockerprivaterepositorycert/train-schedule:${env.BUILD_NUMBER}\""
+                    
+                        //sh "ssh -i $keyfile -o StrictHostKeyChecking=no $username@$prod_ip \"sudo docker run --restart always --name train-schedule -p 8080:8080 -d $dockerprivaterepository/train-schedule:${env.BUILD_NUMBER}\""
                     }
                 }
             }
